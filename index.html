@@ -69,7 +69,7 @@
 
         function onPhotoDataSuccess(imageData) {
             var addCardsText = $("#addCards li").find("input").val();
-            $("#showCards").append("<li data-cards-type='weather'><h1>" + addCardsText + "</h1><center><img src=\"data:image/jpeg;base64," + imageData + "\" /></center></li>");
+            $("#showCards").append("<li data-cards-type='weather'><h1>" + addCardsText + "</h1><center><img src=\"data:image/jpeg;base64," + imageData + "\" style=\"width: 300px;\" /></center></li>");
             $('#pgIndex').trigger('create');
         }
 
