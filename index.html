@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 <head>
     <title>nativeDroid - Theme for jQuery Mobile</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -68,17 +68,14 @@
             return false;
         }
 
-        function onPhotoDataSuccess(imageData) {
+        function onPhotoUriSuccess(imageURI) {
             var addCardsText = $("#addCards li").find("input").val();
-            $("#showCards").append("<li data-cards-type='weather'><h1>" + addCardsText + "</h1><center><img src=\"data:image/jpeg;base64," + imageData + "\" style=\"width: 100%;\" /></center></li>");
+            $("#showCards").append("<li data-cards-type='weather'><h1>" + addCardsText + "</h1><center><img src=\"" + imageURI + "\" style=\"width: 100%;\" onclick=\"showImageFull(" + imageURI + "," + addCardsText + ");\" /></center></li>");
             $('#pgIndex').trigger('create');
         }
 
-        function onPhotoUriSuccess(imageURI) {
-            alert(imageURI);
-            var addCardsText = $("#addCards li").find("input").val();
-            $("#showCards").append("<li data-cards-type='weather'><h1>" + addCardsText + "</h1><center><img src=\"" + imageURI + "\" style=\"width: 100%;\" /></center></li>");
-            $('#pgIndex').trigger('create');
+        function showImageFull(imageURI, addCardsText) {
+            location = "show_doc.html?imgUri=" + imageURI + "&text=" + addCardsText;
         }
     </script>
 

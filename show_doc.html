@@ -1,0 +1,61 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>nativeDroid - Theme for jQuery Mobile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <!-- FontRobot -->
+    <link rel="stylesheet" href="assets/css/roboto/font-roboto.css" />
+    <!-- FontAwesome - http://fortawesome.github.io/Font-Awesome/ -->
+    <link rel="stylesheet" href="assets/css/font-awesome.min.css" />
+    <!-- jQueryMobileCSS - original without styling -->
+    <link rel="stylesheet" href="assets/css/jquerymobile.css" />
+    <!-- nativeDroid core CSS -->
+    <link rel="stylesheet" href="assets/css/jquerymobile.nativedroid.css" />
+    <!-- nativeDroid: Light/Dark -->
+    <link rel="stylesheet" href="assets/css/jquerymobile.nativedroid.dark.css" id='jQMnDTheme' />
+    <!-- nativeDroid: Color Schemes -->
+    <link rel="stylesheet" href="assets/css/jquerymobile.nativedroid.color.green.css"
+        id='jQMnDColor' />
+    <!-- jQuery / jQueryMobile Scripts -->
+    <script src="assets/js/jquery-1.9.1.min.js" type="text/javascript"></script>
+    <script src="assets/js/jquery.mobile-1.3.1.min.js" type="text/javascript"></script>
+    <script src="phonegap.js" type="text/javascript"></script>
+</head>
+<body>
+    <div data-role="page" id="pgshowImage" data-theme='b'>
+        <div data-role="header" data-position="fixed" data-tap-toggle="false" data-theme='b'>
+            <a href="index.html" data-ajax="false"><i class='icon-ellipsis-vertical'></i></a>
+            <h1>
+                <label id="lblHeading" />
+            </h1>
+        </div>
+        <div data-role="content">
+            <img id="imgDataImage" alt="Showing Page" />
+        </div>
+    </div>
+    <script type="text/javascript">
+        var _imgUri = '';
+        var _text = '';
+
+        $(document).on("pagecreate", "#pgshowImage", function (event) {
+            _imgUri = getParameterByName("imgUri");
+            _text = getParameterByName("text");
+
+            $("#lblHeading").text(_text);
+            $("#imgDataImage").attr("src", _imgUri);
+
+        });
+
+        function getParameterByName(name) {
+            name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+            var regexS = "[\\?&]" + name + "=([^&#]*)";
+            var regex = new RegExp(regexS);
+            var results = regex.exec(window.location.href);
+            if (results == null)
+                return "";
+            else
+                return decodeURIComponent(results[1].replace(/\+/g, " "));
+        }
+    </script>
+</body>
+</html>
