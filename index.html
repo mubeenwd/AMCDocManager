@@ -64,7 +64,7 @@
         }
 
         function capturePhoto() {
-            navigator.camera.getPicture(onPhotoDataSuccess, null, { sourceType: 1, quality: 50, destinationType: Camera.DestinationType.FILE_URI, allowEdit: true });
+            navigator.camera.getPicture(onPhotoUriSuccess, null, { sourceType: 1, quality: 50, destinationType: Camera.DestinationType.FILE_URI });
             return false;
         }
 
@@ -75,6 +75,7 @@
         }
 
         function onPhotoUriSuccess(imageURI) {
+            alert(imageURI);
             var addCardsText = $("#addCards li").find("input").val();
             $("#showCards").append("<li data-cards-type='weather'><h1>" + addCardsText + "</h1><center><img src=\"" + imageURI + "\" style=\"width: 100%;\" /></center></li>");
             $('#pgIndex').trigger('create');
