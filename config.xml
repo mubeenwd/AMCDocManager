@@ -6,7 +6,7 @@
         id        = "com.phonegap.amc.documents"
         version   = "1.0.0">
 
-    <name>AMC Doc Manager</name>
+    <name>AMCDocManager</name>
 
     <description>
         AMC Document Manager
