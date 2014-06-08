@@ -52,6 +52,7 @@
         function addPlaceHolderImage() {
             var len = $("#showCards li").length + 1;
             $("#addCards").append("<li data-cards-type='weather'><h1><input type=\"text\" value=\"Page " + len + "\"/></h1><center><img src=\"assets/img/add.png\" onclick=\"onAddImageClick();\"/></center></li>");
+
             $('#pgIndex').trigger('create');
         }
 
@@ -63,13 +64,19 @@
         }
 
         function capturePhoto() {
-            navigator.camera.getPicture(onPhotoDataSuccess, null, { sourceType: 1, quality: 50, destinationType: Camera.DestinationType.DATA_URL, allowEdit: true });
+            navigator.camera.getPicture(onPhotoDataSuccess, null, { sourceType: 1, quality: 50, destinationType: Camera.DestinationType.FILE_URI, allowEdit: true });
             return false;
         }
 
         function onPhotoDataSuccess(imageData) {
             var addCardsText = $("#addCards li").find("input").val();
             $("#showCards").append("<li data-cards-type='weather'><h1>" + addCardsText + "</h1><center><img src=\"data:image/jpeg;base64," + imageData + "\" style=\"width: 100%;\" /></center></li>");
+            $('#pgIndex').trigger('create');
+        }
+
+        function onPhotoUriSuccess(imageURI) {
+            var addCardsText = $("#addCards li").find("input").val();
+            $("#showCards").append("<li data-cards-type='weather'><h1>" + addCardsText + "</h1><center><img src=\"" + imageURI + "\" style=\"width: 100%;\" /></center></li>");
             $('#pgIndex').trigger('create');
         }
     </script>
