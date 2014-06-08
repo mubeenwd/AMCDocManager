@@ -69,8 +69,10 @@
         }
 
         function onPhotoUriSuccess(imageURI) {
+            alert(imageURI);
+            var imageName = imageURI.substr(imageURI.lastIndexOf('/') + 1);
             var addCardsText = $("#addCards li").find("input").val();
-            $("#showCards").append("<li data-cards-type='weather'><h1>" + addCardsText + "</h1><center><img src=\"" + imageURI + "\" style=\"width: 100%;\" onclick=\"showImageFull(" + imageURI + "," + addCardsText + ");\" /></center></li>");
+            $("#showCards").append("<li data-cards-type='weather'><h1>" + addCardsText + "</h1><center><img src=\"" + imageURI + "\" style=\"width: 100%;\" onclick=\"showImageFull(" + imageName + "," + addCardsText + ");\" /></center></li>");
             $('#pgIndex').trigger('create');
         }
 
