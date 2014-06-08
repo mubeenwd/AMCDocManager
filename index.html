@@ -69,10 +69,9 @@
 
         function onPhotoDataSuccess(imageData) {
             var addCardsText = $("#addCards li").find("input").val();
-            $("#showCards").append("<li data-cards-type='weather'><h1>" + addCardsText + "</h1><center><img src=\"data:image/jpeg;base64," + imageData + "\" style=\"width: 300px;\" /></center></li>");
+            $("#showCards").append("<li data-cards-type='weather'><h1>" + addCardsText + "</h1><center><img src=\"data:image/jpeg;base64," + imageData + "\" style=\"width: 100%;\" /></center></li>");
             $('#pgIndex').trigger('create');
         }
-
     </script>
 
     <script src="assets/js/nativedroid.script.js"></script>
