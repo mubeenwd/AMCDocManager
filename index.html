@@ -24,18 +24,32 @@
 <body>
     <div id='map-canvas'>
     </div>
-    <div data-role="page" id="pgIndex" data-theme='b'>
+    <div data-role="page" id="pgDealers" data-theme='b'>
         <div data-role="header" data-position="fixed" data-tap-toggle="false" data-theme='b'>
             <a href="index.html" data-ajax="false"><i class='icon-ellipsis-vertical'></i></a>
             <h1>
                 AMC Doc Manager</h1>
         </div>
         <div data-role="content">
-            <ul data-nativedroid-plugin='cards' id="addCards">
+            <ul data-nativedroid-plugin='cards' id="addDealer">
+                
+            </ul>
+        </div>
+    </div>
+
+     <div data-role="page" id="pgIndex" data-theme='b'>
+        <div data-role="header" data-position="fixed" data-tap-toggle="false" data-theme='b'>
+            <a href="index.html" data-ajax="false"><i class='icon-ellipsis-vertical'></i></a>
+            <h1>
+                AMC Doc Manager</h1>
+        </div>
+        <div data-role="content">
+            
+            <ul data-nativedroid-plugin='cards' id="Ul1">
                 
             </ul>
 
-            <ul data-nativedroid-plugin='cards' id="showCards">
+            <ul data-nativedroid-plugin='cards' id="Ul2">
                 
             </ul>
         </div>
@@ -45,13 +59,27 @@
         var pictureSource;   // picture source
         var destinationType; // sets the format of returned value
 
+        $(document).on("pagecreate", "#pgDealers", function (event) {
+            addDealersCard();
+        });
+
+        function addPlaceHolderImage() {
+            $("#addCards").append("<li data-cards-type='weather'><h1><input id=\"txtDealersName\" type=\"text\" placeHolder=\"Enter dealers name here.\"/></h1><center><input type=\"button\" value=\"Next\" onclick=\"onNextClick();\"/></center></li>");
+
+            $('#pgIndex').trigger('create');
+        }
+
+        function onNextClick() {
+            $.mobile.changePage("#pgIndex", { transition: "slide", changeHash: false });
+        }
+
         $(document).on("pagecreate", "#pgIndex", function (event) {
             addPlaceHolderImage();
         });
 
         function addPlaceHolderImage() {
             var len = $("#showCards li").length + 1;
-            $("#addCards").append("<li data-cards-type='weather'><h1><input type=\"text\" value=\"Page " + len + "\"/></h1><center><img src=\"assets/img/add.png\" onclick=\"onAddImageClick();\"/></center></li>");
+            $("#addCards").append("<li data-cards-type='weather'><h1><input type=\"text\" value=\"Page " + len + "\"/></h1><center><input type=\"button\" value=\"Capture Photo\" onclick=\"onAddImageClick();\"/></center></li>");
 
             $('#pgIndex').trigger('create');
         }
@@ -72,13 +100,10 @@
             alert(imageURI);
             var imageName = imageURI.substr(imageURI.lastIndexOf('/') + 1);
             var addCardsText = $("#addCards li").find("input").val();
-            $("#showCards").append("<li data-cards-type='weather'><h1>" + addCardsText + "</h1><center><img src=\"" + imageURI + "\" style=\"width: 100%;\" onclick=\"showImageFull(" + imageName + "," + addCardsText + ");\" /></center></li>");
+            $("#showCards").append("<li data-cards-type='weather'><h1>" + addCardsText + "</h1><center><img src=\"" + imageURI + "\" style=\"width: 100%;\" /></center></li>");
             $('#pgIndex').trigger('create');
         }
 
-        function showImageFull(imageURI, addCardsText) {
-            location = "show_doc.html?imgUri=" + imageURI + "&text=" + addCardsText;
-        }
     </script>
 
     <script src="assets/js/nativedroid.script.js"></script>
