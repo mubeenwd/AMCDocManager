@@ -106,19 +106,19 @@
 
         function onDocumentSaveClick() {
             addDealersEntery($("#txtDealersName").val());
-            var dealersId = getDealersMaxId();
-            alert("max dealersId: " + dealersId);
-            if (dealersId > 0) {
-                $("#showCards li").each(function () {
-                    var docTitle = $(this).find("h1").html();
-                    var docSrc = $(this).find("img").attr("src");
-                    addDealersDocs(dealersId, docTitle, docSrc);
-                });
+            //            var dealersId = getDealersMaxId();
+            //            alert("max dealersId: " + dealersId);
+            //            if (dealersId > 0) {
+            //                $("#showCards li").each(function () {
+            //                    var docTitle = $(this).find("h1").html();
+            //                    var docSrc = $(this).find("img").attr("src");
+            //                    addDealersDocs(dealersId, docTitle, docSrc);
+            //                });
 
-                alert("saved successfully");
-                $("#showCards").html("");
-                onNextClick();
-            }
+            //                alert("saved successfully");
+            //                $("#showCards").html("");
+            //                onNextClick();
+            //            }
         }
 
 
@@ -150,8 +150,7 @@
             try {
 
                 var currentDate = getCurrentDateAndTime();
-                alert(currentDate);
-
+                
                 html5sql.openDatabase("com.amc.documents.amcdocman", "Aurangabad Municiple Corporation Documents.", 5 * 1024 * 1024);
 
                 html5sql.process(
@@ -160,6 +159,8 @@
                ],
                function () {
                    alert('addDealersEntery: Database created successfuly!!');
+                   var EnteryId = getDealersMaxId();
+                   alert("Max EnteryId:" + EnteryId);
                },
                function () {
                    alert('addDealersEntery: db creation error');
@@ -173,13 +174,12 @@
             try {
 
                 var currentDate = getCurrentDateAndTime();
-                alert(currentDate);
-
+               
                 html5sql.openDatabase("com.amc.documents.amcdocman", "Aurangabad Municiple Corporation Documents.", 5 * 1024 * 1024);
 
                 html5sql.process(
                [
-                "INSERT INTO DealersDocs (EnteryId , DocTitle, DocName, CreationDate) VALUES(" + dealersEnteryId + ",'" + DocTitle + "','" + DocName + "');",
+                "INSERT INTO DealersDocs (EnteryId , DocTitle, DocName, CreationDate) VALUES(" + dealersEnteryId + ",'" + DocTitle + "','" + DocName + "','"+currentDate+"');",
                ],
                function () {
                    alert('addDealersDocs: Database created successfuly!!');
