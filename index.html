@@ -150,7 +150,6 @@
         }
 
         $(document).on("pagecreate", "#pgDocumentList", function (event) {
-            alert("pagecreate");
 
             html5sql.openDatabase("com.amc.documents.amcdocman", "Aurangabad Municiple Corporation Documents.", 5 * 1024 * 1024);
             html5sql.process(
@@ -159,13 +158,14 @@
             ],
             function (transaction, results, rowsArray) {
                 var len = rowsArray.length, i;
-                alert(len);
                 if (len > 0) {
                     $("#docList").append('<li data-role="list-divider">AMC Document List</li>');
                 }
                 for (i = 0; i < len; i++) {
                     $("#docList").append('<li><a href="#pgDocumentList" data-transition="slide" data-direction="reverse"><i class="icon-folder-open"></i>&nbsp;' + rowsArray[i].EnteryName + '</a></li>');
                 }
+
+                $("#docList").listview('refresh');
             },
             function () {
                 alert('pgDocumentList page create: db selection error');
