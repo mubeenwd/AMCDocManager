@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+﻿<!DOCTYPE html>
 <html>
 <head>
     <title>nativeDroid - Theme for jQuery Mobile</title>
@@ -23,9 +23,45 @@
     <script src="phonegap.js" type="text/javascript"></script>
 </head>
 <body>
+    <div data-role="page" id="pgMenu" data-theme='b'>
+        <div data-role="header" data-position="fixed" data-tap-toggle="false" data-theme='b'>
+            <a href="#pgMenu" data-transition="slide" data-direction="reverse"><i class='icon-home'>
+            </i></a>
+            <h1>
+                AMC Doc Manager</h1>
+        </div>
+        <div data-role="content">
+            <ul data-role="listview" data-divider-theme="b" data-icon="false" data-filter="false"
+                data-filter-theme="b" class='showastabs'>
+                <li data-role="list-divider">Document Management Systems</li>
+                <li><a href="#pgDocumentList" data-transition="slide" data-direction="reverse"><i
+                    class='icon-file'></i>&nbsp;Document List</a></li>
+                <li><a href="#pgDealers" data-transition="slide" data-direction="reverse"><i class='icon-file-text'>
+                </i>&nbsp;Add New Document</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div data-role="page" id="pgDocumentList" data-theme='b'>
+        <div data-role="header" data-position="fixed" data-tap-toggle="false" data-theme='b'>
+            <a href="#pgMenu" data-transition="slide" data-direction="reverse"><i class='icon-home'>
+            </i></a>
+            <h1>
+                AMC Doc Manager</h1>
+        </div>
+        <div data-role="content">
+            <ul data-role="listview" id="docList" data-divider-theme="b" data-icon="false" data-filter="false"
+                data-filter-theme="b">
+                
+                
+            </ul>
+        </div>
+    </div>
+
     <div data-role="page" id="pgDealers" data-theme='b'>
         <div data-role="header" data-position="fixed" data-tap-toggle="false" data-theme='b'>
-            <a href="index.html" data-ajax="false"><i class='icon-ellipsis-vertical'></i></a>
+            <a href="#pgMenu" data-transition="slide" data-direction="reverse"><i class='icon-home'>
+            </i></a>
             <h1>
                 AMC Doc Manager</h1>
         </div>
@@ -36,7 +72,8 @@
     </div>
     <div data-role="page" id="pgIndex" data-theme='b'>
         <div data-role="header" data-position="fixed" data-tap-toggle="false" data-theme='b'>
-            <a href="index.html" data-ajax="false"><i class='icon-ellipsis-vertical'></i></a>
+            <a href="#pgMenu" data-transition="slide" data-direction="reverse"><i class='icon-home'>
+            </i></a>
             <h1>
                 AMC Doc Manager</h1>
         </div>
@@ -54,7 +91,7 @@
     </div>
     <script type="text/javascript">
 
-        
+
         var pictureSource;   // picture source
         var destinationType; // sets the format of returned value
 
@@ -63,7 +100,7 @@
         $(document).on("pagecreate", "#pgDealers", function (event) {
             addDealersCard();
         });
-        
+
         function addDealersCard() {
             $("#addDealer").append("<li data-cards-type='weather'><h1><input id=\"txtDealersName\" type=\"text\" placeHolder=\"Enter dealers name here.\"/></h1><center><input style=\"background:orange;\" type=\"button\" value=\"Next\" onclick=\"onNextClick();\"/></center></li>");
 
@@ -77,6 +114,8 @@
         $(document).on("pagecreate", "#pgIndex", function (event) {
             addPlaceHolderImage();
         });
+
+        
 
         function addPlaceHolderImage() {
             var len = $("#showCards li").length + 1;
@@ -106,21 +145,30 @@
 
         function onDocumentSaveClick() {
             addDealersEntery($("#txtDealersName").val());
-            //            var dealersId = getDealersMaxId();
-            //            alert("max dealersId: " + dealersId);
-            //            if (dealersId > 0) {
-            //                $("#showCards li").each(function () {
-            //                    var docTitle = $(this).find("h1").html();
-            //                    var docSrc = $(this).find("img").attr("src");
-            //                    addDealersDocs(dealersId, docTitle, docSrc);
-            //                });
-
-            //                alert("saved successfully");
-            //                $("#showCards").html("");
-            //                onNextClick();
-            //            }
+            $("#showCards").html('');
+            onNextClick();
         }
 
+        $(document).on("pagecreate", "#pgDocumentList", function (event) {
+            html5sql.openDatabase("com.amc.documents.amcdocman", "Aurangabad Municiple Corporation Documents.", 5 * 1024 * 1024);
+            html5sql.process(
+            [
+            "SELECT * FROM DealersEnteries",
+            ],
+            function (transaction, results, rowsArray) {
+                var len = rowsArray.length, i;
+                if (len > 0) {
+                    $("#docList").append('<li data-role="list-divider">AMC Document List</li>');
+                }
+                for (i = 0; i < len; i++) {
+                    $("#docList").append('<li><a href="#pgDocumentList" data-transition="slide" data-direction="reverse"><i class="icon-folder-open"></i>&nbsp;' + rowsArray[i].EnteryName + '</a></li>');
+                }
+            },
+            function () {
+                alert('pgDocumentList page create: db selection error');
+            });
+        });
+        
 
         function onDeviceReady() {
             populateDatabase();
@@ -129,7 +177,7 @@
         function populateDatabase() {
             try {
                 html5sql.openDatabase("com.amc.documents.amcdocman", "Aurangabad Municiple Corporation Documents.", 5 * 1024 * 1024);
-
+                
                 html5sql.process(
                [
                 "CREATE TABLE IF NOT EXISTS DealersEnteries (EnteryId INTEGER PRIMARY KEY AUTOINCREMENT, EnteryName, CreationDate);",
@@ -150,7 +198,7 @@
             try {
 
                 var currentDate = getCurrentDateAndTime();
-                
+
                 html5sql.openDatabase("com.amc.documents.amcdocman", "Aurangabad Municiple Corporation Documents.", 5 * 1024 * 1024);
 
                 html5sql.process(
@@ -158,8 +206,11 @@
                 "INSERT INTO DealersEnteries (EnteryName, CreationDate) VALUES('" + dealersName + "','" + currentDate + "');",
                ],
                function (transaction, results, rowsArray) {
-                   alert('addDealersEntery: Database created successfuly!!');
-                   alert('Returned ID: ' + results.insertId);
+                   $("#showCards li").each(function () {
+                       var docTitle = $(this).find("h1").html();
+                       var docSrc = $(this).find("img").attr("src");
+                       addDealersDocs(results.insertId, docTitle, docSrc);
+                   });
                },
                function () {
                    alert('addDealersEntery: db creation error');
@@ -173,15 +224,15 @@
             try {
 
                 var currentDate = getCurrentDateAndTime();
-               
+
                 html5sql.openDatabase("com.amc.documents.amcdocman", "Aurangabad Municiple Corporation Documents.", 5 * 1024 * 1024);
 
                 html5sql.process(
                [
-                "INSERT INTO DealersDocs (EnteryId , DocTitle, DocName, CreationDate) VALUES(" + dealersEnteryId + ",'" + DocTitle + "','" + DocName + "','"+currentDate+"');",
+                "INSERT INTO DealersDocs (EnteryId , DocTitle, DocName, CreationDate) VALUES(" + dealersEnteryId + ",'" + DocTitle + "','" + DocName + "','" + currentDate + "');",
                ],
                function () {
-                   alert('addDealersDocs: Database created successfuly!!');
+
                },
                function () {
                    alert('addDealersDocs: db creation error');
@@ -190,31 +241,6 @@
                 alert("addDealersDocs;Error: " + e.get_Message());
             }
         }
-
-        function getDealersMaxId() {
-            var result = 0;
-            try {
-                html5sql.process(
-                       ["SEELCT MAX(EnteryId) AS EnteryId FROM DealersEnteries"],
-                       function (transaction, results, rowsArray) {
-                           if (rowsArray.length > 0) {
-                               result = rowsArray[0].EnteryId;
-                           }
-                           else {
-                               alert("getDealersMaxId: no data returned from dealers enteries");
-                           }
-                       },
-                       function () {
-                           alert("getDealersMaxId: error fetching data from dealers enteries");
-                       }
-                   );
-            } catch (e) {
-                alert("getDealersMaxId;Error: " + e.get_Message());
-            }
-
-            return result;
-        }
-
 
         function getCurrentDateAndTime() {
             var currentdate = new Date();
@@ -227,10 +253,6 @@
 
             return datetime;
         }
-
-
-        
-
     </script>
     <script src="assets/js/nativedroid.script.js"></script>
 </body>
