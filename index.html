@@ -34,13 +34,14 @@
             <ul data-role="listview" data-divider-theme="b" data-icon="false" data-filter="false"
                 data-filter-theme="b" class='showastabs'>
                 <li data-role="list-divider">Document Management Systems</li>
-                <li><a href="#pgDocumentList" data-transition="slide" data-direction="reverse"><i
+                <li><a href="index.html#pgDocumentList" data-transition="slide" data-direction="reverse"><i
                     class='icon-file'></i>&nbsp;Document List</a></li>
                 <li><a href="#pgDealers" data-transition="slide" data-direction="reverse"><i class='icon-file-text'>
                 </i>&nbsp;Add New Document</a></li>
             </ul>
         </div>
     </div>
+
     <div data-role="page" id="pgDocumentList" data-theme='b'>
         <div data-role="header" data-position="fixed" data-tap-toggle="false" data-theme='b'>
             <a href="#pgMenu" data-transition="slide" data-direction="reverse"><i class='icon-home'>
@@ -51,22 +52,25 @@
         <div data-role="content">
             <ul data-role="listview" id="docList" data-divider-theme="b" data-icon="false" data-filter="false"
                 data-filter-theme="b">
+                
             </ul>
         </div>
     </div>
-    <div data-role="page" id="pgDocumenDetails" data-theme='b'>
+
+    <div data-role="page" id="pgDocDetails" data-theme='b'>
         <div data-role="header" data-position="fixed" data-tap-toggle="false" data-theme='b'>
             <a href="#pgMenu" data-transition="slide" data-direction="reverse"><i class='icon-home'>
             </i></a>
             <h1>
-                AMC Documents Details</h1>
+                AMC Doc Manager</h1>
         </div>
         <div data-role="content">
-            <h1><label id="dealersName"></label></h1>
-            <ul data-nativedroid-plugin='cards' id="docDetailsCard">
+            <h1><label id="lblDocTitle" /></h1>
+            <ul data-nativedroid-plugin='cards' id="cardDetailsHolder">
             </ul>
         </div>
     </div>
+
     <div data-role="page" id="pgDealers" data-theme='b'>
         <div data-role="header" data-position="fixed" data-tap-toggle="false" data-theme='b'>
             <a href="#pgMenu" data-transition="slide" data-direction="reverse"><i class='icon-home'>
@@ -106,7 +110,7 @@
 
         document.addEventListener("deviceready", onDeviceReady, false);
 
-        $(document).on("pagecreate", "#pgDealers", function (event) {
+        $(document).on("pageinit", "#pgDealers", function (event) {
             addDealersCard();
         });
 
@@ -120,11 +124,9 @@
             $.mobile.changePage("#pgIndex", { transition: "slide", changeHash: false });
         }
 
-        $(document).on("pagecreate", "#pgIndex", function (event) {
+        $(document).on("pageinit", "#pgIndex", function (event) {
             addPlaceHolderImage();
         });
-
-
 
         function addPlaceHolderImage() {
             var len = $("#showCards li").length + 1;
@@ -135,7 +137,6 @@
 
         function onAddImageClick() {
             capturePhoto();
-
             var len = $("#showCards li").length + 1;
             $("#addCards li").find("input").val("Page " + len);
         }
@@ -153,67 +154,89 @@
         }
 
         function onDocumentSaveClick() {
+            
             addDealersEntery($("#txtDealersName").val());
-            $("#showCards").html('');
-            onNextClick();
+           
         }
 
-        $(document).on("pagecreate", "#pgDocumentList", function (event) {
+        $(document).on("pageinit", "#pgDocumentList", function (event) {
+            try {
+                $.mobile.showPageLoadingMsg();
+                html5sql.openDatabase("com.amc.documents.amcdocman", "Aurangabad Municiple Corporation Documents.", 5 * 1024 * 1024);
+                html5sql.process(
+                [
+                "SELECT * FROM DealersEnteries",
+                ],
+                function (transaction, results, rowsArray) {
+                    var len = rowsArray.length, i;
+                    if (len > 0) {
+                        $("#docList").append('<li data-role="list-divider">AMC Document List</li>');
 
-            html5sql.openDatabase("com.amc.documents.amcdocman", "Aurangabad Municiple Corporation Documents.", 5 * 1024 * 1024);
-            html5sql.process(
-            [
-            "SELECT * FROM DealersEnteries",
-            ],
-            function (transaction, results, rowsArray) {
-                var len = rowsArray.length, i;
-                if (len > 0) {
-                    $("#docList").append('<li data-role="list-divider">AMC Document List</li>');
-                }
-                for (i = 0; i < len; i++) {
-                    $("#docList").append('<li><a href="#" onclick="showDetails(' + rowsArray[i].EnteryId + ',\'' + rowsArray[i].EnteryName + '\');"><i class="icon-folder-open"></i>&nbsp;' + rowsArray[i].EnteryName + '</a></li>');
-                }
+                        for (i = 0; i < len; i++) {
+                            $("#docList").append('<li><a href="#" onclick="showDetails(' + rowsArray[i].EnteryId + ',\'' + rowsArray[i].EnteryName + '\');"><i class="icon-folder-open"></i>&nbsp;' + rowsArray[i].EnteryName + '</a></li>');
+                        }
 
-                $("#docList").listview('refresh');
-            },
-            function () {
-                alert('pgDocumentList page create: db selection error');
-            });
+                        $("#docList").listview('refresh');
+                        $.mobile.hidePageLoadingMsg();
+                    }
+                    else {
+                        $.mobile.hidePageLoadingMsg();
+                        alert("pgDocumentList, Create: No Record Found.");
+                    }
+                },
+                function () {
+                    $.mobile.hidePageLoadingMsg();
+                    alert('pgDocumentList page create: db selection error');
+                });
+            } catch (e) {
+                $.mobile.hidePageLoadingMsg();
+                alert('pgDocumentList page create: ' + e);
+            }
         });
 
-
         function showDetails(enteryId, enteryName) {
+            try {
+                $("#lblDocTitle").text(enteryName);
+                $("#cardDetailsHolder").html('');
+                $.mobile.showPageLoadingMsg();
+                html5sql.openDatabase("com.amc.documents.amcdocman", "Aurangabad Municiple Corporation Documents.", 5 * 1024 * 1024);
 
-            $("#docDetailsCard").html('');
+                html5sql.process(
+                [
+                "SELECT * FROM DealersDocs WHERE EnteryId=" + enteryId,
+                ],
+                function (transaction, results, rowsArray) {
+                    var len = rowsArray.length, i;
+                    if (len > 0) {
+                        for (i = 0; i < len; i++) {
+                            $("#cardDetailsHolder").append("<li data-cards-type='weather'><h1>" + rowsArray[i].DocTitle + "</h1><center><img src=\"" + rowsArray[i].DocName + "\" style=\"width: 100%;\" /></center></li>");
+                        }
 
-            $("#dealersName").text(enteryName);
-
-            html5sql.openDatabase("com.amc.documents.amcdocman", "Aurangabad Municiple Corporation Documents.", 5 * 1024 * 1024);
-            html5sql.process(
-            [
-            "SELECT * FROM DealersDocs WHERE EnteryId=" + enteryId,
-            ],
-            function (transaction, results, rowsArray) {
-                var len = rowsArray.length, i;
-                if (len>0) {
-                    for (i = 0; i < len; i++) {
-                        $("#docDetailsCard").append("<li data-cards-type='weather'><h1>" + rowsArray[i].DocTitle + "</h1><center><img src=\"" + rowsArray[i].DocName + "\" style=\"width: 100%;\" /></center></li>");
+                        $.mobile.hidePageLoadingMsg();
+                        $.mobile.changePage("#pgDocDetails", { transition: "slide", changeHash: false });
                     }
-
-                    $.mobile.changePage("#pgDocumenDetails", { transition: "slide", changeHash: false });
-                }
-            },
-            function () {
-                alert('showDetails: db selection error');
-            });
+                    else {
+                        alert('showDetails: No Record Found');
+                        $.mobile.showPageLoadingMsg();
+                    }
+                },
+                function () {
+                    $.mobile.hidePageLoadingMsg();
+                    alert('showDetails: db selection error');
+                });
+            } catch (e) {
+                $.mobile.hidePageLoadingMsg();
+                alert('showDetails: ' + e.Message);
+            }
         }
-            
+        
         function onDeviceReady() {
             populateDatabase();
         }
 
         function populateDatabase() {
             try {
+                $.mobile.showPageLoadingMsg();
                 html5sql.openDatabase("com.amc.documents.amcdocman", "Aurangabad Municiple Corporation Documents.", 5 * 1024 * 1024);
 
                 html5sql.process(
@@ -222,18 +245,23 @@
                 "CREATE TABLE IF NOT EXISTS DealersDocs (DocId INTEGER PRIMARY KEY AUTOINCREMENT, EnteryId , DocTitle, DocName, CreationDate);"
                ],
                function () {
-                   alert('PopulateDatabase: Database created successfuly!!');
+                   //alert('PopulateDatabase: Database created successfuly!!');
+                   $.mobile.hidePageLoadingMsg();
                },
                function () {
+                   $.mobile.hidePageLoadingMsg();
                    alert('PopulateDatabase: db creation error');
                });
             } catch (e) {
+                $.mobile.hidePageLoadingMsg();
                 alert("PopulateDatabase;Error: " + e.get_Message());
             }
         }
 
         function addDealersEntery(dealersName) {
             try {
+
+                $.mobile.showPageLoadingMsg();
 
                 var currentDate = getCurrentDateAndTime();
 
@@ -247,36 +275,30 @@
                    $("#showCards li").each(function () {
                        var docTitle = $(this).find("h1").html();
                        var docSrc = $(this).find("img").attr("src");
-                       addDealersDocs(results.insertId, docTitle, docSrc);
+
+                       html5sql.process(
+                       [
+                        "INSERT INTO DealersDocs (EnteryId , DocTitle, DocName, CreationDate) VALUES(" + results.insertId + ",'" + docTitle + "','" + docSrc + "','" + currentDate + "');",
+                       ],
+                       function () {
+
+                       },
+                       function () {
+                           alert('addDealersDocs: db creation error');
+                       });
                    });
+
+                   $.mobile.hidePageLoadingMsg();
+                   $("#showCards").html('');
+                   onNextClick();
                },
                function () {
+                   $.mobile.hidePageLoadingMsg();
                    alert('addDealersEntery: db creation error');
                });
             } catch (e) {
+                $.mobile.hidePageLoadingMsg();
                 alert("addDealersEntery;Error: " + e.get_Message());
-            }
-        }
-
-        function addDealersDocs(dealersEnteryId, DocTitle, DocName) {
-            try {
-
-                var currentDate = getCurrentDateAndTime();
-
-                html5sql.openDatabase("com.amc.documents.amcdocman", "Aurangabad Municiple Corporation Documents.", 5 * 1024 * 1024);
-
-                html5sql.process(
-               [
-                "INSERT INTO DealersDocs (EnteryId , DocTitle, DocName, CreationDate) VALUES(" + dealersEnteryId + ",'" + DocTitle + "','" + DocName + "','" + currentDate + "');",
-               ],
-               function () {
-
-               },
-               function () {
-                   alert('addDealersDocs: db creation error');
-               });
-            } catch (e) {
-                alert("addDealersDocs;Error: " + e.get_Message());
             }
         }
 
